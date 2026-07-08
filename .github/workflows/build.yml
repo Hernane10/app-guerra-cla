@@ -5,22 +5,26 @@ jobs:
   build-apk:
     runs-on: ubuntu-22.04
     steps:
-      - name: Baixar arquivos do repositório
+      - name: Baixar arquivos
         uses: actions/checkout@v4
 
-      - name: Instalar todas as dependências
+      - name: Instalar dependências
         run: |
           sudo apt update -y
-          sudo apt install -y python3-pip openjdk-17-jdk zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libffi-dev libssl-dev
-          pip3 install --upgrade pip
+          sudo apt install -y python3-pip openjdk-17-jdk zip unzip autoconf libtool pkg-config zlib1g-dev libffi-dev libssl-dev
+          pip3 install --upgrade pip setuptools wheel
           pip3 install buildozer==1.5.0 Cython==0.29.36
           echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
+
+      - name: Verificar arquivos
+        run: ls -la  # Confere se buildozer.spec está lá
 
       - name: Gerar APK
         run: buildozer android clean debug
 
-      - name: Disponibilizar APK para download
+      - name: Disponibilizar APK
         uses: actions/upload-artifact@v4
         with:
           name: APK_Guerra_Clã
           path: bin/*.apk
+          
